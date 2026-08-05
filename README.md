@@ -35,3 +35,5 @@ Use **Export JSON** to download the current chart as a versioned `political-comp
 ## Deployment
 
 Netlify uses `npm run build`, publishes `dist`, and sends unknown routes to `index.html` for the single-page application.
+
+GitHub Pages is also configured through `.github/workflows/deploy.yml`. Pushes to `main` run the tests, build `dist`, and deploy it to [`https://lucmanaly.github.io/Political-Compass/`](https://lucmanaly.github.io/Political-Compass/). The Vite base path switches automatically for the project-site URL while local development stays at `/`.
