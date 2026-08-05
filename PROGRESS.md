@@ -51,7 +51,8 @@ Compare mode, starter-chart selection, Supabase sync, and public read-only links
 - Version 1.0 release build — passed, 1,998 modules transformed with the Pages base path.
 - Version 1.1 release build — passed, 1,998 modules transformed in both standard and Pages builds.
 - Full View validation — controls are hidden, canvas expands, editing gestures are disabled, and pan/zoom remains available.
-- Browser visual QA — not completed in this environment; the remote browser cannot connect to workspace-local preview servers.
+- Live Pages Full View validation — passed on a 1363×936 viewport: frame/wrapper matched 1363×936, graph content covered at 1363×1363, and a drag translated the cropped axis by 100px.
+- Phone visual recheck — implementation is based on the supplied iPhone screenshots; confirm the corrected live layout on the physical phone after Safari refreshes its cached assets.
 
 ## Handoff
 
