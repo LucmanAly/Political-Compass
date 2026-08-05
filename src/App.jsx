@@ -1,13 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Crosshair, Layers3, LockKeyhole, Plus, Sparkles } from 'lucide-react';
 import CompassCanvas from './components/CompassCanvas.jsx';
 import CompassViewport from './components/CompassViewport.jsx';
+import ChartToolbar from './components/ChartToolbar.jsx';
 import EntityDetailCard from './components/EntityDetailCard.jsx';
 import EntityPanel from './components/EntityPanel.jsx';
+import ImportReview from './components/ImportReview.jsx';
 import Legend from './components/Legend.jsx';
 import { useEntities } from './hooks/useEntities.js';
 import { formatCoordinate, svgToWorld } from './lib/coordinates.js';
+import { ENTITY_TYPES } from './lib/entities.js';
+import { createExportPayload, mergeImportedEntities, parseImportText } from './lib/portable.js';
 
 function App() {
   const canvasRef = useRef(null);
@@ -16,6 +20,7 @@ function App() {
     addEntity,
     updateEntity,
     deleteEntity,
+    replaceEntities,
     storageError,
   } = useEntities();
   const [legendOpen, setLegendOpen] = useState(true);
@@ -24,7 +29,30 @@ function App() {
   const [draggingId, setDraggingId] = useState(null);
   const [zoomScale, setZoomScale] = useState(1);
   const [pingKey, setPingKey] = useState(0);
+  const [query, setQuery] = useState('');
+  const [activeTypes, setActiveTypes] = useState(() => new Set(ENTITY_TYPES.map((type) => type.value)));
+  const [pendingImport, setPendingImport] = useState(null);
+  const [transferNotice, setTransferNotice] = useState('');
   const selectedEntity = entities.find((entity) => entity.id === selectedEntityId) || null;
+  const visibleEntities = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    return entities.filter((entity) => (
+      activeTypes.has(entity.type)
+      && (!normalizedQuery || entity.name.toLowerCase().includes(normalizedQuery))
+    ));
+  }, [activeTypes, entities, query]);
+
+  useEffect(() => {
+    if (selectedEntityId && !visibleEntities.some((entity) => entity.id === selectedEntityId)) {
+      setSelectedEntityId(null);
+    }
+  }, [selectedEntityId, visibleEntities]);
+
+  useEffect(() => {
+    if (!transferNotice) return undefined;
+    const timeout = window.setTimeout(() => setTransferNotice(''), 4600);
+    return () => window.clearTimeout(timeout);
+  }, [transferNotice]);
 
   const getWorldPoint = useCallback((clientX, clientY) => {
     const svg = canvasRef.current;
@@ -73,6 +101,56 @@ function App() {
     setPanel({ mode: 'edit', entity, initialCoordinates: null });
   };
 
+  const toggleType = (type) => {
+    setActiveTypes((current) => {
+      const next = new Set(current);
+      if (next.has(type)) next.delete(type);
+      else next.add(type);
+      return next;
+    });
+  };
+
+  const handleExport = () => {
+    const payload = createExportPayload(entities);
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `political-compass-${new Date().toISOString().slice(0, 10)}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    setTransferNotice(`Exported ${entities.length} position${entities.length === 1 ? '' : 's'}.`);
+  };
+
+  const handleImportFile = async (file) => {
+    if (file.size > 8 * 1024 * 1024) {
+      setTransferNotice('That file is larger than the 8 MB import limit.');
+      return;
+    }
+
+    try {
+      const parsed = parseImportText(await file.text());
+      setPendingImport({ ...parsed, fileName: file.name });
+    } catch (error) {
+      setTransferNotice(error.message);
+    }
+  };
+
+  const handleMergeImport = () => {
+    const result = mergeImportedEntities(entities, pendingImport.entities);
+    replaceEntities(result.entities);
+    setPendingImport(null);
+    setTransferNotice(`Merged ${result.imported} new position${result.imported === 1 ? '' : 's'} into the chart.`);
+  };
+
+  const handleReplaceImport = () => {
+    if (!window.confirm('Replace every current chart position with this imported file?')) return;
+    replaceEntities(pendingImport.entities);
+    setPendingImport(null);
+    setSelectedEntityId(null);
+    setTransferNotice(`Replaced the chart with ${pendingImport.entities.length} imported position${pendingImport.entities.length === 1 ? '' : 's'}.`);
+  };
+
   const handleSave = (draft) => {
     if (panel?.mode === 'edit') {
       updateEntity(panel.entity.id, draft);
@@ -116,7 +194,7 @@ function App() {
             <span />
           </div>
           <div>
-            <p className="eyebrow">FIELD INSTRUMENT · 02</p>
+            <p className="eyebrow">FIELD INSTRUMENT · 03</p>
             <h1>Political Compass</h1>
           </div>
         </motion.div>
@@ -145,6 +223,16 @@ function App() {
       </header>
 
       <main className="canvas-stage">
+        <ChartToolbar
+          query={query}
+          onQueryChange={setQuery}
+          activeTypes={activeTypes}
+          onToggleType={toggleType}
+          visibleCount={visibleEntities.length}
+          totalCount={entities.length}
+          onExport={handleExport}
+          onImportFile={handleImportFile}
+        />
         <div className="canvas-frame">
           <CompassViewport
             markerDragging={Boolean(draggingId)}
@@ -153,7 +241,7 @@ function App() {
           >
             <CompassCanvas
               ref={canvasRef}
-              entities={entities}
+              entities={visibleEntities}
               selectedEntityId={selectedEntityId}
               pingKey={pingKey}
               onCanvasClick={(coordinates) => openAddPanel(coordinates)}
@@ -170,7 +258,7 @@ function App() {
           transition={{ duration: 1.2, delay: 0.35 }}
         >
           <span className="caption-rule" />
-          <span>{entities.length} POSITIONS · {zoomScale.toFixed(1)}× FIELD</span>
+          <span>{visibleEntities.length} OF {entities.length} POSITIONS · {zoomScale.toFixed(1)}× FIELD</span>
           <span className="caption-rule" />
         </motion.div>
 
@@ -186,8 +274,8 @@ function App() {
           <Sparkles size={14} strokeWidth={1.5} />
         </div>
         <div>
-          <p className="eyebrow">PHASE 02 · INTERACTIVE SURVEY</p>
-          <p>Tap an empty field to add a position. Drag a marker to recalibrate it.</p>
+          <p className="eyebrow">PHASE 03 · PORTABLE SURVEY</p>
+          <p>Search, filter, and carry this chart with you as a validated JSON file.</p>
         </div>
       </aside>
 
@@ -197,6 +285,17 @@ function App() {
       </div>
 
       {storageError && <div className="storage-warning" role="status">{storageError}</div>}
+      {transferNotice && <div className="transfer-notice" role="status">{transferNotice}</div>}
+
+      {entities.length > 0 && visibleEntities.length === 0 && (
+        <div className="filter-empty-state" role="status">
+          <p className="eyebrow">NO POSITIONS IN THIS FIELD</p>
+          <p>Try a different name or turn another type back on.</p>
+          <button type="button" onClick={() => { setQuery(''); setActiveTypes(new Set(ENTITY_TYPES.map((type) => type.value))); }}>
+            Reset filters
+          </button>
+        </div>
+      )}
 
       <AnimatePresence initial={false}>
         <Legend open={legendOpen} onToggle={() => setLegendOpen((current) => !current)} />
@@ -217,6 +316,15 @@ function App() {
             initialCoordinates={panel.initialCoordinates}
             onSave={handleSave}
             onCancel={() => setPanel(null)}
+          />
+        )}
+        {pendingImport && (
+          <ImportReview
+            key={pendingImport.fileName}
+            pending={pendingImport}
+            onMerge={handleMergeImport}
+            onReplace={handleReplaceImport}
+            onCancel={() => setPendingImport(null)}
           />
         )}
       </AnimatePresence>

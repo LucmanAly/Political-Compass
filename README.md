@@ -4,7 +4,7 @@ An interactive political-compass instrument built around a deep-space navigation
 
 ## Current phase
 
-Phase 2 adds smooth zoom/pan, local entity persistence, sample markers, marker dragging, quick-add, and a responsive add/edit workflow. Search, import/export, and final release hardening are reserved for Phase 3.
+Phase 3 adds name search, multi-select type filters, validated JSON portability, and a compact responsive chart toolbar. Phase 2 supplies smooth zoom/pan, local entity persistence, sample markers, marker dragging, quick-add, and the responsive add/edit workflow.
 
 ## Run locally
 
@@ -29,6 +29,8 @@ npm run build
 ## Data behavior
 
 Entities are autosaved to versioned browser `localStorage`. A fresh chart starts with five illustrative sample positions so the interaction layer is immediately testable. Images are resized into local data URLs; no image or entity data leaves the browser in v1.
+
+Use **Export JSON** to download the current chart as a versioned `political-compass-YYYY-MM-DD.json` file. Imports accept that envelope (or a plain entity array), validate records, skip duplicates, and merge by default. Replacing the chart requires an explicit confirmation.
 
 ## Deployment
 
