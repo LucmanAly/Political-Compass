@@ -25,6 +25,7 @@ Phase 2 was promoted to `main` at commit `566565f7cc793504df6efe69119a8763560e3e
 - [ ] Desktop and phone visual interaction review — blocked by workspace-local browser access
 - [x] Publish the Phase 3 checkpoint to `develop` — commit `731fa9a6f84c4681b340ad513d82dbcd2b0b4150`
 - [x] Promote the Phase 3 checkpoint to `main`
+- [x] Configure GitHub Pages deployment from `main`
 
 ## Phase 3 boundary
 
@@ -34,6 +35,7 @@ Compare mode, starter-chart selection, Supabase sync, and public read-only links
 
 - `npm test` — passed, 3 test files / 12 tests.
 - `npm run build` — passed, Vite generated `dist` successfully.
+- `GITHUB_ACTIONS=true npm run build` — passed, generated asset URLs under `/Political-Compass/`.
 - Browser visual QA — not completed in this environment; the remote browser cannot connect to workspace-local preview servers.
 
 ## Handoff
