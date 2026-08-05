@@ -281,12 +281,12 @@ The top-right **Full view** button calls `App.enterFocusMode()` and creates an i
 2. `focusMode` adds `.is-focus-mode` to `.app-shell`.
 3. CSS hides the topbar, toolbar, zoom buttons, legend, status readouts, detail/edit/import surfaces, and notices.
 4. `.canvas-frame` expands to the complete `100vw × 100dvh` viewport.
-5. `CompassViewport` calculates `max(width, height) / min(width, height)` through `coverScaleForViewport()` and raises the transform minimum scale to that value. The graph therefore covers the entire rectangular screen without distorting its square geometry.
-6. `FullViewTransform` applies the cover scale with explicit centered X/Y offsets through `setTransform()` on entry, exit, resize, and orientation changes. `centerView()` is intentionally not used because it can leave same-sized rectangular wrapper/content pairs at 1×. On portrait screens the left/right edges are cropped initially but remain reachable by panning; landscape screens crop top/bottom in the same way.
+5. `.zoom-wrapper` becomes a centered flex viewport and `.zoom-content` becomes a physical square sized to `max(100vw, 100dvh)` (with `100vmax` fallback). The graph therefore covers the entire rectangular screen without distorting its square geometry or relying on an imperative zoom helper.
+6. On portrait screens the left/right edges are cropped initially but remain reachable because the transformed content is physically wider than its wrapper; landscape screens crop top/bottom in the same way.
 7. `CompassCanvas` receives `interactive={false}`, which prevents quick-add and makes `EntityMarker` omit click, drag, and keyboard-button handlers. Viewport wheel, pinch, and pan remain available.
 8. A single `Exit full view` button remains visible; Escape exits as well.
 
-The `react-zoom-pan-pinch` wrapper/content classes have intrinsic fit-content sizing. `.zoom-wrapper` and `.zoom-content` therefore use explicit `100% !important` dimensions so the transformed graph inherits the full `.canvas-frame` size instead of collapsing to the SVG default of 300×300.
+The `react-zoom-pan-pinch` wrapper/content classes have intrinsic fit-content sizing. `.zoom-wrapper` and `.zoom-content` therefore use explicit `!important` dimensions so the viewport does not collapse to the SVG default of 300×300. Full View then overrides only the content dimensions to the larger viewport axis.
 
 `enterFocusMode()` requests the browser Fullscreen API when available. The CSS state is intentionally independent, so iPhone Safari and embedded browsers that reject or lack native fullscreen still get the full-viewport experience. A `fullscreenchange` listener clears `focusMode` when the user exits native fullscreen through browser controls.
 
@@ -493,7 +493,6 @@ The current suite has 12 tests across 3 files. There is no React component test 
 | Marker selection or dragging | `App.jsx`, `EntityMarker.jsx` | `CompassViewport.jsx`, `coordinates.js` |
 | Wheel/pinch/pan/zoom limits | `src/components/CompassViewport.jsx` | `App.jsx` zoom callbacks, `.zoom-controls` |
 | Full View / immersive presentation | `src/App.jsx` | `CompassCanvas.jsx`, `EntityMarker.jsx`, `.is-focus-mode` styles |
-| Full View cover-scale calculation | `src/lib/viewport.js` | `CompassViewport.jsx`, `viewport.test.js` |
 | Displayed version / last-updated date | `src/lib/release.js` | `App.jsx`, `.release-stamp`, `package.json` |
 | Add/edit form fields | `src/components/EntityPanel.jsx` | `entities.js`, `image.js`, panel styles |
 | Detail card actions | `src/components/EntityDetailCard.jsx` | `App.jsx` mutation handlers |

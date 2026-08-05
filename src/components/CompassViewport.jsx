@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Minus, Plus, RotateCcw } from 'lucide-react';
 import { TransformComponent, TransformWrapper, useControls } from 'react-zoom-pan-pinch';
-import { coverScaleForViewport } from '../lib/viewport.js';
 
 function ZoomControls() {
   const { zoomIn, zoomOut, resetTransform } = useControls();
@@ -22,58 +21,13 @@ function ZoomControls() {
   );
 }
 
-function FullViewTransform({ active, coverScale, wrapperRef }) {
-  const { setTransform } = useControls();
-
-  useEffect(() => {
-    let secondFrame;
-    const firstFrame = window.requestAnimationFrame(() => {
-      secondFrame = window.requestAnimationFrame(() => {
-        const bounds = wrapperRef.current?.getBoundingClientRect();
-        const targetScale = active ? coverScale : 1;
-        const positionX = active && bounds ? (bounds.width * (1 - targetScale)) / 2 : 0;
-        const positionY = active && bounds ? (bounds.height * (1 - targetScale)) / 2 : 0;
-        setTransform(positionX, positionY, targetScale, 260, 'easeOut');
-      });
-    });
-
-    return () => {
-      window.cancelAnimationFrame(firstFrame);
-      if (secondFrame) window.cancelAnimationFrame(secondFrame);
-    };
-  }, [active, coverScale, setTransform, wrapperRef]);
-
-  return null;
-}
-
-function CompassViewport({ children, focusMode = false, markerDragging, onZoom, onTransformed }) {
+function CompassViewport({ children, markerDragging, onZoom, onTransformed }) {
   const wrapperRef = useRef(null);
-  const [coverScale, setCoverScale] = useState(1);
-
-  useEffect(() => {
-    if (!focusMode) {
-      setCoverScale(1);
-      return undefined;
-    }
-
-    const updateCoverScale = () => {
-      const bounds = wrapperRef.current?.getBoundingClientRect();
-      setCoverScale(coverScaleForViewport(bounds?.width, bounds?.height));
-    };
-
-    updateCoverScale();
-    window.addEventListener('resize', updateCoverScale);
-    window.addEventListener('orientationchange', updateCoverScale);
-    return () => {
-      window.removeEventListener('resize', updateCoverScale);
-      window.removeEventListener('orientationchange', updateCoverScale);
-    };
-  }, [focusMode]);
 
   return (
     <div className="viewport-shell" ref={wrapperRef}>
       <TransformWrapper
-        minScale={focusMode ? coverScale : 1}
+        minScale={1}
         maxScale={8}
         initialScale={1}
         centerOnInit
@@ -89,7 +43,6 @@ function CompassViewport({ children, focusMode = false, markerDragging, onZoom, 
         <TransformComponent wrapperClass="zoom-wrapper" contentClass="zoom-content">
           {children}
         </TransformComponent>
-        <FullViewTransform active={focusMode} coverScale={coverScale} wrapperRef={wrapperRef} />
         <ZoomControls />
       </TransformWrapper>
     </div>
