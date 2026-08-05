@@ -12,6 +12,7 @@ import { useEntities } from './hooks/useEntities.js';
 import { formatCoordinate, svgToWorld } from './lib/coordinates.js';
 import { ENTITY_TYPES } from './lib/entities.js';
 import { createExportPayload, mergeImportedEntities, parseImportText } from './lib/portable.js';
+import { APP_VERSION, LAST_UPDATED_LABEL } from './lib/release.js';
 
 function App() {
   const canvasRef = useRef(null);
@@ -254,7 +255,7 @@ function App() {
             <span>LIVE SURVEY</span>
           </div>
           <div className="topbar-actions">
-            <button type="button" className="full-view-button" onClick={enterFocusMode}>
+            <button type="button" className="full-view-button" onClick={enterFocusMode} title="Open the compass in full view">
               <Maximize2 size={15} strokeWidth={1.7} /> <span>Full view</span>
             </button>
             <button type="button" className="add-entity-button" onClick={() => openAddPanel()}>
@@ -331,7 +332,8 @@ function App() {
 
       <div className="instrument-footer">
         <span><LockKeyhole size={12} strokeWidth={1.5} aria-hidden="true" /> LOCAL-FIRST · AUTOSAVED</span>
-        <span><Layers3 size={12} strokeWidth={1.5} aria-hidden="true" /> RANGE −10 / +10</span>
+        <span className="release-stamp">VERSION {APP_VERSION} · LAST UPDATED {LAST_UPDATED_LABEL}</span>
+        <span className="range-readout"><Layers3 size={12} strokeWidth={1.5} aria-hidden="true" /> RANGE −10 / +10</span>
       </div>
 
       {storageError && <div className="storage-warning" role="status">{storageError}</div>}

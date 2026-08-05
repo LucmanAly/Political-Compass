@@ -655,6 +655,15 @@ textarea:focus-visible,
   gap: 6px;
 }
 
+.instrument-footer .release-stamp {
+  position: absolute;
+  left: 50%;
+  color: rgba(231, 221, 203, 0.44);
+  letter-spacing: 0.1em;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
 .entity-marker {
   cursor: grab;
   outline: none;
@@ -1336,8 +1345,15 @@ textarea:focus-visible,
     font-size: 7px;
   }
 
-  .instrument-footer span:last-child {
+  .instrument-footer .range-readout {
     display: none;
+  }
+
+  .instrument-footer .release-stamp {
+    right: 0;
+    left: auto;
+    font-size: 7px;
+    transform: none;
   }
 
   .legend-panel {
@@ -1358,17 +1374,25 @@ textarea:focus-visible,
 }
 
 @media (max-width: 720px) {
-  .add-entity-button,
-  .full-view-button {
-    width: 34px;
-    min-height: 34px;
+  .add-entity-button {
+    width: 44px;
+    min-height: 44px;
     padding: 0;
     justify-content: center;
   }
 
-  .add-entity-button span,
-  .full-view-button span {
+  .add-entity-button span {
     display: none;
+  }
+
+  .full-view-button {
+    width: auto;
+    min-height: 44px;
+    padding: 0 10px;
+  }
+
+  .full-view-button span {
+    display: inline;
   }
 
   .exit-focus-button {

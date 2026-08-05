@@ -2,11 +2,11 @@
 
 ## Current status
 
-Phase 3 — Portability & discovery: **promoted to main**
+Version 1.0 — First public release: **promoted to main**
 
 Repository: `LucmanAly/Political-Compass`  
 Working branch: `develop` (follow-on work)  
-Version: `0.3.0`
+Version: `1.0` (package version `1.0.0`)
 
 Phase 2 was promoted to `main` at commit `566565f7cc793504df6efe69119a8763560e3e3d`. Phase 3 is now promoted to `main`; `develop` remains the active branch for follow-on work. The visual review limitation remains documented because the remote browser cannot reach workspace-local preview servers from this environment.
 
@@ -27,6 +27,11 @@ Phase 2 was promoted to `main` at commit `566565f7cc793504df6efe69119a8763560e3e
 - [x] Promote the Phase 3 checkpoint to `main`
 - [x] Configure GitHub Pages deployment from `main`
 - [x] Add immersive Full View mode with native fullscreen and a CSS fallback
+- [x] Keep the Full View text label visible on mobile with a 44px touch target
+- [x] Add a bottom release stamp with Version 1.0 and the last-updated date
+- [x] Establish the 1.0 → 1.1 → 1.2 release-numbering convention
+- [x] Publish Version 1.0 to `develop`
+- [x] Promote Version 1.0 to `main`
 
 ## Phase 3 boundary
 
@@ -37,9 +42,10 @@ Compare mode, starter-chart selection, Supabase sync, and public read-only links
 - `npm test` — passed, 3 test files / 12 tests.
 - `npm run build` — passed, Vite generated `dist` successfully.
 - `GITHUB_ACTIONS=true npm run build` — passed, generated asset URLs under `/Political-Compass/`.
+- Version 1.0 release build — passed, 1,998 modules transformed with the Pages base path.
 - Full View validation — controls are hidden, canvas expands, editing gestures are disabled, and pan/zoom remains available.
 - Browser visual QA — not completed in this environment; the remote browser cannot connect to workspace-local preview servers.
 
 ## Handoff
 
-Phase 3 is implemented and promoted to `main`. `develop` is ready for the next optional follow-on phase; the visual interaction review remains the only open validation item for this checkpoint.
+Version 1.0 includes Phase 3, immersive Full View, and the persistent release stamp. The identical release tree is published on `develop` and `main`; the broader phone interaction review remains an open follow-on item.

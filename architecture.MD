@@ -2,7 +2,7 @@
 
 > Maintainer’s map for the Interactive Political Compass. Read this file before changing a feature. It explains which module owns each responsibility, how data moves through the application, which contracts must remain stable, and where to start when debugging or extending the product.
 
-**Snapshot:** v0.3.0 · Phase 3 promoted to `main`  
+**Snapshot:** v1.0 · Phase 3 and the first public release promoted to `main`  
 **Application:** React + Vite single-page app  
 **Persistence:** browser `localStorage` only  
 **Primary release:** GitHub Pages from `main`; Netlify configuration is also retained
@@ -86,6 +86,7 @@ flowchart TD
 | `lib/portable.js` | Import/export envelope, validation, dedupe, merge | File picker UI or localStorage |
 | `lib/image.js` | Browser image-to-data-URL conversion | Entity creation or persistence |
 | `styles.css` | Design tokens, layout, responsive rules, SVG visual treatment | Business logic |
+| `lib/release.js` | User-facing version and last-updated labels | Package/build versioning or runtime state |
 
 ## 3. State ownership in `App.jsx`
 
@@ -422,6 +423,7 @@ Fonts are loaded from Google Fonts at the top of the stylesheet:
 - `.chart-toolbar`, `.legend-panel`, `.phase-note`, `.instrument-footer`, and detail cards are overlays around the canvas.
 - `.entity-panel` is a right-side sheet on desktop and a bottom sheet under 720px.
 - `.is-focus-mode` is the immersive presentation modifier; its selectors own which overlays disappear and how the canvas expands.
+- `.release-stamp` centers the version and last-updated date in the bottom instrument footer; on mobile it moves to the right edge.
 - Mobile controls receive larger touch targets; body overscroll is disabled to keep gestures on the instrument.
 
 When changing z-index or overlay placement, check pointer behavior: the chart needs to remain interactive while controls use `pointer-events: auto` through their own rules.
@@ -487,6 +489,7 @@ The current suite has 12 tests across 3 files. There is no React component test 
 | Marker selection or dragging | `App.jsx`, `EntityMarker.jsx` | `CompassViewport.jsx`, `coordinates.js` |
 | Wheel/pinch/pan/zoom limits | `src/components/CompassViewport.jsx` | `App.jsx` zoom callbacks, `.zoom-controls` |
 | Full View / immersive presentation | `src/App.jsx` | `CompassCanvas.jsx`, `EntityMarker.jsx`, `.is-focus-mode` styles |
+| Displayed version / last-updated date | `src/lib/release.js` | `App.jsx`, `.release-stamp`, `package.json` |
 | Add/edit form fields | `src/components/EntityPanel.jsx` | `entities.js`, `image.js`, panel styles |
 | Detail card actions | `src/components/EntityDetailCard.jsx` | `App.jsx` mutation handlers |
 | Search/filter controls | `src/components/ChartToolbar.jsx` | `App.jsx` `visibleEntities`, toolbar styles |
@@ -549,6 +552,14 @@ The current suite has 12 tests across 3 files. There is no React component test 
 - **Fonts look different offline:** fonts come from Google Fonts; the system fallback is intentional and the app remains usable without the remote font.
 
 ## 18. Maintainer checklist
+
+### Release numbering
+
+- The first public release is **1.0**.
+- Each subsequent released update increments the visible minor number: **1.1**, **1.2**, **1.3**, and so on.
+- Keep `APP_VERSION` and `LAST_UPDATED_LABEL` in `src/lib/release.js` synchronized with the bottom readout.
+- Keep the technical semver in `package.json`/`package-lock.json` aligned, using `1.1.0` for visible release `1.1`.
+- Update the architecture snapshot and `PROGRESS.md` whenever the displayed release changes.
 
 Before merging or promoting a change:
 
