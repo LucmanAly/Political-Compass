@@ -36,6 +36,7 @@ Validation run:
 
 - `npm test` — passed, 1 test file / 6 tests.
 - `npm run build` — passed, Vite generated `dist` successfully.
+- Responsive hardening — ambient layering and phone-sized chart bounds were corrected after code review.
 - Browser visual QA — not completed in this environment; local preview is healthy, but the remote browser cannot connect to workspace-local ports.
 
 ## Handoff
