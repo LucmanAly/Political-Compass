@@ -377,12 +377,17 @@ textarea:focus-visible,
 }
 
 .zoom-wrapper {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.zoom-wrapper {
   position: relative;
 }
 
 .zoom-content {
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
   align-items: center;
   justify-content: center;
 }
