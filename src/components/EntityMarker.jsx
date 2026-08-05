@@ -9,7 +9,7 @@ const RING_COLORS = Object.freeze({
   origin: '#C9A661',
 });
 
-function EntityMarker({ entity, selected, onClick, onPointerDown }) {
+function EntityMarker({ entity, selected, interactive = true, onClick, onPointerDown }) {
   const { x, y } = worldToSvg(entity);
   const color = RING_COLORS[quadrantForCoordinates(entity.economic, entity.social)];
   const initials = getInitials(entity.name);
@@ -21,22 +21,22 @@ function EntityMarker({ entity, selected, onClick, onPointerDown }) {
       data-entity-marker="true"
       data-entity-id={entity.id}
       transform={`translate(${x} ${y})`}
-      onClick={(event) => {
+      onClick={interactive ? (event) => {
         event.stopPropagation();
         onClick(entity);
-      }}
-      onPointerDown={(event) => {
+      } : undefined}
+      onPointerDown={interactive ? (event) => {
         event.stopPropagation();
         onPointerDown(event, entity);
-      }}
-      onKeyDown={(event) => {
+      } : undefined}
+      onKeyDown={interactive ? (event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           onClick(entity);
         }
-      }}
-      role="button"
-      tabIndex={0}
+      } : undefined}
+      role={interactive ? 'button' : undefined}
+      tabIndex={interactive ? 0 : undefined}
       aria-label={`${entity.name}, ${entity.economic}, ${entity.social}`}
     >
       <circle className="marker-shadow" cx="2" cy="4" r="28" />

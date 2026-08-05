@@ -24,6 +24,7 @@ Political Compass is a personal, local-first visual instrument. The chart is the
 - A 2D economic/social political compass from `-10` to `+10` on both axes.
 - Four atmospheric quadrant washes and a brass compass rose centered at the origin.
 - Zoom, pan, reset-to-fit, and a one-shot sonar-style zoom ping.
+- Immersive Full View mode that hides instrument controls while preserving pan and zoom.
 - People, parties, organizations, and ideologies represented as draggable markers.
 - Add/edit/delete/detail workflows, including quick-add from an empty chart location.
 - Name search, multi-select type filters, and an empty filtered-state reset.
@@ -102,6 +103,7 @@ flowchart TD
 | `activeTypes` | `Set<string>` | `App` | Multi-select type filter. Initialized with all `ENTITY_TYPES`. |
 | `pendingImport` | parsed import object or `null` | `App` | Holds validated file content until the user chooses merge, replace, or cancel. |
 | `transferNotice` | `string` | `App` | Short export/import/storage status message, automatically cleared after 4.6 seconds. |
+| `focusMode` | `boolean` | `App` | Immersive chart presentation state. Hides overlays, disables editing gestures, and tracks native fullscreen exit. |
 
 ### Derived state
 
@@ -270,6 +272,19 @@ Marker dragging is deliberately owned by `App`:
 
 This prevents the same gesture from moving the viewport and the marker. If changing pointer behavior, preserve the `event.stopPropagation()` calls and the panning lock.
 
+### Full View mode
+
+The top-right **Full view** button calls `App.enterFocusMode()` and creates an immersive, presentation-only chart:
+
+1. Open panels, selection, pending import review, and marker dragging are cleared.
+2. `focusMode` adds `.is-focus-mode` to `.app-shell`.
+3. CSS hides the topbar, toolbar, zoom buttons, legend, status readouts, detail/edit/import surfaces, and notices.
+4. The square `.canvas-frame` expands to `min(100vw, 100vh)` and remains centered.
+5. `CompassCanvas` receives `interactive={false}`, which prevents quick-add and makes `EntityMarker` omit click, drag, and keyboard-button handlers. Viewport wheel, pinch, and pan remain available.
+6. A single `Exit full view` button remains visible; Escape exits as well.
+
+`enterFocusMode()` requests the browser Fullscreen API when available. The CSS state is intentionally independent, so iPhone Safari and embedded browsers that reject or lack native fullscreen still get the full-viewport experience. A `fullscreenchange` listener clears `focusMode` when the user exits native fullscreen through browser controls.
+
 ## 8. Add, edit, delete, and quick-add flows
 
 ### Add flow
@@ -406,6 +421,7 @@ Fonts are loaded from Google Fonts at the top of the stylesheet:
 - `.canvas-stage` centers the square instrument.
 - `.chart-toolbar`, `.legend-panel`, `.phase-note`, `.instrument-footer`, and detail cards are overlays around the canvas.
 - `.entity-panel` is a right-side sheet on desktop and a bottom sheet under 720px.
+- `.is-focus-mode` is the immersive presentation modifier; its selectors own which overlays disappear and how the canvas expands.
 - Mobile controls receive larger touch targets; body overscroll is disabled to keep gestures on the instrument.
 
 When changing z-index or overlay placement, check pointer behavior: the chart needs to remain interactive while controls use `pointer-events: auto` through their own rules.
@@ -470,6 +486,7 @@ The current suite has 12 tests across 3 files. There is no React component test 
 | Marker appearance, images, initials, labels | `src/components/EntityMarker.jsx` | `entities.js`, `.marker-*` styles |
 | Marker selection or dragging | `App.jsx`, `EntityMarker.jsx` | `CompassViewport.jsx`, `coordinates.js` |
 | Wheel/pinch/pan/zoom limits | `src/components/CompassViewport.jsx` | `App.jsx` zoom callbacks, `.zoom-controls` |
+| Full View / immersive presentation | `src/App.jsx` | `CompassCanvas.jsx`, `EntityMarker.jsx`, `.is-focus-mode` styles |
 | Add/edit form fields | `src/components/EntityPanel.jsx` | `entities.js`, `image.js`, panel styles |
 | Detail card actions | `src/components/EntityDetailCard.jsx` | `App.jsx` mutation handlers |
 | Search/filter controls | `src/components/ChartToolbar.jsx` | `App.jsx` `visibleEntities`, toolbar styles |

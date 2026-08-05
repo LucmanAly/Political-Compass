@@ -15,6 +15,7 @@ const CompassCanvas = forwardRef(function CompassCanvas({
   entities = [],
   selectedEntityId,
   pingKey,
+  interactive = true,
   onCanvasClick,
   onMarkerClick,
   onMarkerPointerDown,
@@ -24,11 +25,13 @@ const CompassCanvas = forwardRef(function CompassCanvas({
   const pointerDown = useRef(null);
 
   const handlePointerDown = (event) => {
+    if (!interactive) return;
     if (event.button !== 0) return;
     pointerDown.current = { x: event.clientX, y: event.clientY };
   };
 
   const handleCanvasClick = (event) => {
+    if (!interactive) return;
     if (event.target.closest?.('[data-entity-marker]')) return;
 
     const start = pointerDown.current;
@@ -179,6 +182,7 @@ const CompassCanvas = forwardRef(function CompassCanvas({
             key={entity.id}
             entity={entity}
             selected={entity.id === selectedEntityId}
+            interactive={interactive}
             onClick={onMarkerClick}
             onPointerDown={onMarkerPointerDown}
           />

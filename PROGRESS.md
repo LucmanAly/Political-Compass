@@ -26,6 +26,7 @@ Phase 2 was promoted to `main` at commit `566565f7cc793504df6efe69119a8763560e3e
 - [x] Publish the Phase 3 checkpoint to `develop` — commit `731fa9a6f84c4681b340ad513d82dbcd2b0b4150`
 - [x] Promote the Phase 3 checkpoint to `main`
 - [x] Configure GitHub Pages deployment from `main`
+- [x] Add immersive Full View mode with native fullscreen and a CSS fallback
 
 ## Phase 3 boundary
 
@@ -36,6 +37,7 @@ Compare mode, starter-chart selection, Supabase sync, and public read-only links
 - `npm test` — passed, 3 test files / 12 tests.
 - `npm run build` — passed, Vite generated `dist` successfully.
 - `GITHUB_ACTIONS=true npm run build` — passed, generated asset URLs under `/Political-Compass/`.
+- Full View validation — controls are hidden, canvas expands, editing gestures are disabled, and pan/zoom remains available.
 - Browser visual QA — not completed in this environment; the remote browser cannot connect to workspace-local preview servers.
 
 ## Handoff
