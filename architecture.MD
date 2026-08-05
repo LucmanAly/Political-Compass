@@ -286,6 +286,8 @@ The top-right **Full view** button calls `App.enterFocusMode()` and creates an i
 7. `CompassCanvas` receives `interactive={false}`, which prevents quick-add and makes `EntityMarker` omit click, drag, and keyboard-button handlers. Viewport wheel, pinch, and pan remain available.
 8. A single `Exit full view` button remains visible; Escape exits as well.
 
+The `react-zoom-pan-pinch` wrapper/content classes have intrinsic fit-content sizing. `.zoom-wrapper` and `.zoom-content` therefore use explicit `100% !important` dimensions so the transformed graph inherits the full `.canvas-frame` size instead of collapsing to the SVG default of 300×300.
+
 `enterFocusMode()` requests the browser Fullscreen API when available. The CSS state is intentionally independent, so iPhone Safari and embedded browsers that reject or lack native fullscreen still get the full-viewport experience. A `fullscreenchange` listener clears `focusMode` when the user exits native fullscreen through browser controls.
 
 ## 8. Add, edit, delete, and quick-add flows

@@ -36,6 +36,7 @@ Phase 2 was promoted to `main` at commit `566565f7cc793504df6efe69119a8763560e3e
 - [x] Automatically cover portrait and landscape screens without distorting the graph
 - [x] Preserve pan access to cropped edges and retain pinch/scroll zoom
 - [x] Add unit coverage for portrait, landscape, square, and invalid viewport dimensions
+- [x] Override the zoom library's intrinsic 300×300 wrapper so the graph inherits the full viewport
 - [x] Publish Version 1.1 to `develop`
 - [x] Promote Version 1.1 to `main`
 
