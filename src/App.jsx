@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Crosshair, Layers3, LockKeyhole, Plus, Sparkles } from 'lucide-react';
+import { Crosshair, Layers3, LockKeyhole, Maximize2, Minimize2, Plus, Sparkles } from 'lucide-react';
 import CompassCanvas from './components/CompassCanvas.jsx';
 import CompassViewport from './components/CompassViewport.jsx';
 import ChartToolbar from './components/ChartToolbar.jsx';
@@ -12,6 +12,7 @@ import { useEntities } from './hooks/useEntities.js';
 import { formatCoordinate, svgToWorld } from './lib/coordinates.js';
 import { ENTITY_TYPES } from './lib/entities.js';
 import { createExportPayload, mergeImportedEntities, parseImportText } from './lib/portable.js';
+import { APP_VERSION, LAST_UPDATED_LABEL } from './lib/release.js';
 
 function App() {
   const canvasRef = useRef(null);
@@ -33,6 +34,7 @@ function App() {
   const [activeTypes, setActiveTypes] = useState(() => new Set(ENTITY_TYPES.map((type) => type.value)));
   const [pendingImport, setPendingImport] = useState(null);
   const [transferNotice, setTransferNotice] = useState('');
+  const [focusMode, setFocusMode] = useState(false);
   const selectedEntity = entities.find((entity) => entity.id === selectedEntityId) || null;
   const visibleEntities = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -80,16 +82,52 @@ function App() {
     };
   }, [draggingId, getWorldPoint, updateEntity]);
 
+  const exitFocusMode = useCallback(async () => {
+    setFocusMode(false);
+    if (document.fullscreenElement && document.exitFullscreen) {
+      try {
+        await document.exitFullscreen();
+      } catch {
+        // CSS focus mode still exits if the browser rejects the native request.
+      }
+    }
+  }, []);
+
+  const enterFocusMode = async () => {
+    setPanel(null);
+    setSelectedEntityId(null);
+    setPendingImport(null);
+    setDraggingId(null);
+    setFocusMode(true);
+
+    if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+      try {
+        await document.documentElement.requestFullscreen();
+      } catch {
+        // iOS and embedded browsers use the CSS full-viewport fallback.
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) setFocusMode(false);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === 'Escape') {
+        if (focusMode) exitFocusMode();
         setPanel(null);
         setSelectedEntityId(null);
       }
     };
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
-  }, []);
+  }, [exitFocusMode, focusMode]);
 
   const openAddPanel = (coordinates = { economic: 0, social: 0 }) => {
     setSelectedEntityId(null);
@@ -177,7 +215,7 @@ function App() {
   };
 
   return (
-    <div className={`app-shell ${draggingId ? 'is-dragging-marker' : ''}`}>
+    <div className={`app-shell ${draggingId ? 'is-dragging-marker' : ''} ${focusMode ? 'is-focus-mode' : ''}`}>
       <div className="atmosphere atmosphere-one" aria-hidden="true" />
       <div className="atmosphere atmosphere-two" aria-hidden="true" />
 
@@ -216,9 +254,14 @@ function App() {
             <span className="state-dot" aria-hidden="true" />
             <span>LIVE SURVEY</span>
           </div>
-          <button type="button" className="add-entity-button" onClick={() => openAddPanel()}>
-            <Plus size={15} strokeWidth={1.7} /> <span>Add entity</span>
-          </button>
+          <div className="topbar-actions">
+            <button type="button" className="full-view-button" onClick={enterFocusMode} title="Open the compass in full view">
+              <Maximize2 size={15} strokeWidth={1.7} /> <span>Full view</span>
+            </button>
+            <button type="button" className="add-entity-button" onClick={() => openAddPanel()}>
+              <Plus size={15} strokeWidth={1.7} /> <span>Add entity</span>
+            </button>
+          </div>
         </motion.div>
       </header>
 
@@ -244,6 +287,7 @@ function App() {
               entities={visibleEntities}
               selectedEntityId={selectedEntityId}
               pingKey={pingKey}
+              interactive={!focusMode}
               onCanvasClick={(coordinates) => openAddPanel(coordinates)}
               onMarkerClick={(entity) => setSelectedEntityId(entity.id)}
               onMarkerPointerDown={handleMarkerPointerDown}
@@ -269,6 +313,13 @@ function App() {
         </div>
       </main>
 
+      {focusMode && (
+        <button type="button" className="exit-focus-button" onClick={exitFocusMode} aria-label="Exit full view">
+          <Minimize2 size={17} strokeWidth={1.7} aria-hidden="true" />
+          <span>Exit full view</span>
+        </button>
+      )}
+
       <aside className="phase-note" aria-label="Current build status">
         <div className="phase-note-icon" aria-hidden="true">
           <Sparkles size={14} strokeWidth={1.5} />
@@ -281,7 +332,8 @@ function App() {
 
       <div className="instrument-footer">
         <span><LockKeyhole size={12} strokeWidth={1.5} aria-hidden="true" /> LOCAL-FIRST · AUTOSAVED</span>
-        <span><Layers3 size={12} strokeWidth={1.5} aria-hidden="true" /> RANGE −10 / +10</span>
+        <span className="release-stamp">VERSION {APP_VERSION} · LAST UPDATED {LAST_UPDATED_LABEL}</span>
+        <span className="range-readout"><Layers3 size={12} strokeWidth={1.5} aria-hidden="true" /> RANGE −10 / +10</span>
       </div>
 
       {storageError && <div className="storage-warning" role="status">{storageError}</div>}

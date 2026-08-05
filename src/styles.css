@@ -212,9 +212,18 @@ textarea:focus-visible,
   padding-top: 3px;
 }
 
-.add-entity-button {
+.topbar-actions {
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.add-entity-button,
+.full-view-button,
+.exit-focus-button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 7px;
   min-height: 36px;
   padding: 0 13px;
@@ -226,9 +235,21 @@ textarea:focus-visible,
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 9px;
   letter-spacing: 0.08em;
-  pointer-events: auto;
   text-transform: uppercase;
   transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.full-view-button {
+  color: var(--brass-bright);
+  border-color: rgba(201, 166, 97, 0.44);
+  background: rgba(12, 17, 27, 0.72);
+  backdrop-filter: blur(10px);
+}
+
+.full-view-button:hover {
+  border-color: rgba(226, 194, 126, 0.72);
+  background: rgba(201, 166, 97, 0.12);
+  transform: translateY(-1px);
 }
 
 .add-entity-button:hover {
@@ -292,6 +313,51 @@ textarea:focus-visible,
   width: min(94vw, 94vh, 1180px);
   height: min(94vw, 94vh, 1180px);
   transform: translateY(1.6vh);
+}
+
+.exit-focus-button {
+  position: absolute;
+  z-index: 30;
+  top: max(18px, env(safe-area-inset-top));
+  right: max(18px, env(safe-area-inset-right));
+  min-height: 42px;
+  color: var(--brass-bright);
+  border-color: rgba(201, 166, 97, 0.5);
+  background: rgba(10, 14, 22, 0.78);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
+}
+
+.exit-focus-button:hover {
+  border-color: rgba(226, 194, 126, 0.8);
+  background: rgba(201, 166, 97, 0.13);
+}
+
+.app-shell.is-focus-mode .topbar,
+.app-shell.is-focus-mode .chart-toolbar,
+.app-shell.is-focus-mode .zoom-controls,
+.app-shell.is-focus-mode .survey-caption,
+.app-shell.is-focus-mode .origin-readout,
+.app-shell.is-focus-mode .phase-note,
+.app-shell.is-focus-mode .instrument-footer,
+.app-shell.is-focus-mode .storage-warning,
+.app-shell.is-focus-mode .transfer-notice,
+.app-shell.is-focus-mode .filter-empty-state,
+.app-shell.is-focus-mode .legend-panel,
+.app-shell.is-focus-mode .entity-detail-card,
+.app-shell.is-focus-mode .entity-panel,
+.app-shell.is-focus-mode .import-review {
+  display: none;
+}
+
+.app-shell.is-focus-mode .canvas-frame {
+  width: min(100vw, 100vh);
+  height: min(100vw, 100vh);
+  transform: none;
+}
+
+.app-shell.is-focus-mode .entity-marker {
+  cursor: default;
 }
 
 .compass-canvas {
@@ -587,6 +653,15 @@ textarea:focus-visible,
   display: inline-flex;
   align-items: center;
   gap: 6px;
+}
+
+.instrument-footer .release-stamp {
+  position: absolute;
+  left: 50%;
+  color: rgba(231, 221, 203, 0.44);
+  letter-spacing: 0.1em;
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
 
 .entity-marker {
@@ -1270,8 +1345,15 @@ textarea:focus-visible,
     font-size: 7px;
   }
 
-  .instrument-footer span:last-child {
+  .instrument-footer .range-readout {
     display: none;
+  }
+
+  .instrument-footer .release-stamp {
+    right: 0;
+    left: auto;
+    font-size: 7px;
+    transform: none;
   }
 
   .legend-panel {
@@ -1293,13 +1375,33 @@ textarea:focus-visible,
 
 @media (max-width: 720px) {
   .add-entity-button {
-    width: 34px;
-    min-height: 34px;
+    width: 44px;
+    min-height: 44px;
     padding: 0;
     justify-content: center;
   }
 
   .add-entity-button span {
+    display: none;
+  }
+
+  .full-view-button {
+    width: auto;
+    min-height: 44px;
+    padding: 0 10px;
+  }
+
+  .full-view-button span {
+    display: inline;
+  }
+
+  .exit-focus-button {
+    width: 44px;
+    min-height: 44px;
+    padding: 0;
+  }
+
+  .exit-focus-button span {
     display: none;
   }
 
