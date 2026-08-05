@@ -23,7 +23,7 @@ Phase 2 was promoted to `main` at commit `566565f7cc793504df6efe69119a8763560e3e
 - [x] Focus-visible, touch-target, and overscroll polish
 - [x] Production build — Vite build passed
 - [ ] Desktop and phone visual interaction review — blocked by workspace-local browser access
-- [ ] Publish the Phase 3 checkpoint to `develop`
+- [x] Publish the Phase 3 checkpoint to `develop` — commit `731fa9a6f84c4681b340ad513d82dbcd2b0b4150`
 
 ## Phase 3 boundary
 
