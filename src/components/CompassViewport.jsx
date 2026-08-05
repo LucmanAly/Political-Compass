@@ -22,14 +22,18 @@ function ZoomControls() {
   );
 }
 
-function FullViewTransform({ active, coverScale }) {
-  const { centerView } = useControls();
+function FullViewTransform({ active, coverScale, wrapperRef }) {
+  const { setTransform } = useControls();
 
   useEffect(() => {
     let secondFrame;
     const firstFrame = window.requestAnimationFrame(() => {
       secondFrame = window.requestAnimationFrame(() => {
-        centerView(active ? coverScale : 1, 260, 'easeOut');
+        const bounds = wrapperRef.current?.getBoundingClientRect();
+        const targetScale = active ? coverScale : 1;
+        const positionX = active && bounds ? (bounds.width * (1 - targetScale)) / 2 : 0;
+        const positionY = active && bounds ? (bounds.height * (1 - targetScale)) / 2 : 0;
+        setTransform(positionX, positionY, targetScale, 260, 'easeOut');
       });
     });
 
@@ -37,7 +41,7 @@ function FullViewTransform({ active, coverScale }) {
       window.cancelAnimationFrame(firstFrame);
       if (secondFrame) window.cancelAnimationFrame(secondFrame);
     };
-  }, [active, centerView, coverScale]);
+  }, [active, coverScale, setTransform, wrapperRef]);
 
   return null;
 }
@@ -85,7 +89,7 @@ function CompassViewport({ children, focusMode = false, markerDragging, onZoom, 
         <TransformComponent wrapperClass="zoom-wrapper" contentClass="zoom-content">
           {children}
         </TransformComponent>
-        <FullViewTransform active={focusMode} coverScale={coverScale} />
+        <FullViewTransform active={focusMode} coverScale={coverScale} wrapperRef={wrapperRef} />
         <ZoomControls />
       </TransformWrapper>
     </div>

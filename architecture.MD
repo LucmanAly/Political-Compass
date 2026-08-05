@@ -282,7 +282,7 @@ The top-right **Full view** button calls `App.enterFocusMode()` and creates an i
 3. CSS hides the topbar, toolbar, zoom buttons, legend, status readouts, detail/edit/import surfaces, and notices.
 4. `.canvas-frame` expands to the complete `100vw × 100dvh` viewport.
 5. `CompassViewport` calculates `max(width, height) / min(width, height)` through `coverScaleForViewport()` and raises the transform minimum scale to that value. The graph therefore covers the entire rectangular screen without distorting its square geometry.
-6. `FullViewTransform` recenters the cover-scale graph on entry, exit, resize, and orientation changes. On portrait screens the left/right edges are cropped initially but remain reachable by panning; landscape screens crop top/bottom in the same way.
+6. `FullViewTransform` applies the cover scale with explicit centered X/Y offsets through `setTransform()` on entry, exit, resize, and orientation changes. `centerView()` is intentionally not used because it can leave same-sized rectangular wrapper/content pairs at 1×. On portrait screens the left/right edges are cropped initially but remain reachable by panning; landscape screens crop top/bottom in the same way.
 7. `CompassCanvas` receives `interactive={false}`, which prevents quick-add and makes `EntityMarker` omit click, drag, and keyboard-button handlers. Viewport wheel, pinch, and pan remain available.
 8. A single `Exit full view` button remains visible; Escape exits as well.
 
