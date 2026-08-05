@@ -357,6 +357,20 @@ textarea:focus-visible,
   transform: none;
 }
 
+.app-shell.is-focus-mode .zoom-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-shell.is-focus-mode .zoom-content {
+  width: 100vmax !important;
+  height: 100vmax !important;
+  width: max(100vw, 100dvh) !important;
+  height: max(100vw, 100dvh) !important;
+  flex: none;
+}
+
 .app-shell.is-focus-mode .entity-marker {
   cursor: default;
 }

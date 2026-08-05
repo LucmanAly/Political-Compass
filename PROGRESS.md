@@ -33,9 +33,8 @@ Phase 2 was promoted to `main` at commit `566565f7cc793504df6efe69119a8763560e3e
 - [x] Publish Version 1.0 to `develop`
 - [x] Promote Version 1.0 to `main`
 - [x] Expand the Full View canvas frame to the complete viewport
-- [x] Automatically cover portrait and landscape screens without distorting the graph
+- [x] Cover portrait and landscape screens with a centered `vmax` square without distorting the graph
 - [x] Preserve pan access to cropped edges and retain pinch/scroll zoom
-- [x] Add unit coverage for portrait, landscape, square, and invalid viewport dimensions
 - [x] Override the zoom library's intrinsic 300×300 wrapper so the graph inherits the full viewport
 - [x] Publish Version 1.1 to `develop`
 - [x] Promote Version 1.1 to `main`
@@ -46,11 +45,11 @@ Compare mode, starter-chart selection, Supabase sync, and public read-only links
 
 ## Validation record
 
-- `npm test` — passed, 4 test files / 16 tests.
+- `npm test` — passed, 3 test files / 12 tests.
 - `npm run build` — passed, Vite generated `dist` successfully.
 - `GITHUB_ACTIONS=true npm run build` — passed, generated asset URLs under `/Political-Compass/`.
 - Version 1.0 release build — passed, 1,998 modules transformed with the Pages base path.
-- Version 1.1 release build — passed, 1,999 modules transformed in both standard and Pages builds.
+- Version 1.1 release build — passed, 1,998 modules transformed in both standard and Pages builds.
 - Full View validation — controls are hidden, canvas expands, editing gestures are disabled, and pan/zoom remains available.
 - Browser visual QA — not completed in this environment; the remote browser cannot connect to workspace-local preview servers.
 
