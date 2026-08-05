@@ -278,6 +278,7 @@ function App() {
         />
         <div className="canvas-frame">
           <CompassViewport
+            focusMode={focusMode}
             markerDragging={Boolean(draggingId)}
             onZoom={() => setPingKey((current) => current + 1)}
             onTransformed={(_, state) => setZoomScale(state.scale)}
