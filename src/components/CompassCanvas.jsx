@@ -1,5 +1,7 @@
-import { CHART_BOUNDS, formatCoordinate, worldToSvg } from '../lib/coordinates.js';
+import { forwardRef, useRef } from 'react';
+import { CHART_BOUNDS, formatCoordinate, svgToWorld, worldToSvg } from '../lib/coordinates.js';
 import CompassRose from './CompassRose.jsx';
+import EntityMarker from './EntityMarker.jsx';
 
 const TICK_VALUES = Array.from({ length: 11 }, (_, index) => -10 + index * 2);
 const QUADRANT_LABELS = [
@@ -9,21 +11,56 @@ const QUADRANT_LABELS = [
   { text: 'AUTHORITARIAN RIGHT', x: 868, y: 872, anchor: 'end' },
 ];
 
-function CompassCanvas() {
+const CompassCanvas = forwardRef(function CompassCanvas({
+  entities = [],
+  selectedEntityId,
+  pingKey,
+  onCanvasClick,
+  onMarkerClick,
+  onMarkerPointerDown,
+}, ref) {
   const { left, top, right, bottom } = CHART_BOUNDS;
   const chartSize = right - left;
+  const pointerDown = useRef(null);
+
+  const handlePointerDown = (event) => {
+    if (event.button !== 0) return;
+    pointerDown.current = { x: event.clientX, y: event.clientY };
+  };
+
+  const handleCanvasClick = (event) => {
+    if (event.target.closest?.('[data-entity-marker]')) return;
+
+    const start = pointerDown.current;
+    pointerDown.current = null;
+    if (start && Math.hypot(event.clientX - start.x, event.clientY - start.y) > 8) return;
+
+    const svg = ref?.current;
+    if (!svg) return;
+    const bounds = svg.getBoundingClientRect();
+    const svgPoint = {
+      x: ((event.clientX - bounds.left) / bounds.width) * 1000,
+      y: ((event.clientY - bounds.top) / bounds.height) * 1000,
+    };
+
+    if (svgPoint.x < left || svgPoint.x > right || svgPoint.y < top || svgPoint.y > bottom) return;
+    onCanvasClick(svgToWorld(svgPoint));
+  };
 
   return (
     <svg
+      ref={ref}
       className="compass-canvas"
       viewBox="0 0 1000 1000"
       role="img"
       aria-labelledby="compass-title compass-description"
       preserveAspectRatio="xMidYMid meet"
+      onPointerDown={handlePointerDown}
+      onClick={handleCanvasClick}
     >
       <title id="compass-title">Political compass coordinate instrument</title>
       <desc id="compass-description">
-        A four-quadrant chart with economic Left to Right on the horizontal axis and
+        An interactive four-quadrant chart with economic Left to Right on the horizontal axis and
         governmental Authoritarian to Libertarian on the vertical axis.
       </desc>
 
@@ -56,6 +93,9 @@ function CompassCanvas() {
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
+        <clipPath id="marker-clip">
+          <circle r="21" cx="0" cy="0" />
+        </clipPath>
       </defs>
 
       <rect width="1000" height="1000" fill="#0F1420" />
@@ -129,6 +169,22 @@ function CompassCanvas() {
       <circle className="origin-halo" cx={500} cy={500} r={148} fill="url(#origin-halo)" aria-hidden="true" />
       <CompassRose />
 
+      {pingKey > 0 && (
+        <circle key={pingKey} className="sonar-ping" cx="500" cy="500" r="38" aria-hidden="true" />
+      )}
+
+      <g className="entity-layer" aria-label="Plotted entities">
+        {entities.map((entity) => (
+          <EntityMarker
+            key={entity.id}
+            entity={entity}
+            selected={entity.id === selectedEntityId}
+            onClick={onMarkerClick}
+            onPointerDown={onMarkerPointerDown}
+          />
+        ))}
+      </g>
+
       <g className="instrument-corner-marks" aria-hidden="true">
         <path d="M 100 122 V 100 H 122" />
         <path d="M 878 100 H 900 V 122" />
@@ -137,6 +193,6 @@ function CompassCanvas() {
       </g>
     </svg>
   );
-}
+});
 
 export default CompassCanvas;

@@ -10,7 +10,7 @@ This is a personal, local-first political-compass instrument. Keep the interacti
 - Tailwind is available for layout utilities; the visual system lives in `src/styles.css` so the instrument remains easy to tune.
 - Use SVG for the chart surface. Coordinate math belongs in `src/lib/coordinates.js`, not inside presentation components.
 - Keep persistence behind a small adapter in `src/lib/store.js` when the data layer is added. Components must not write to `localStorage` directly.
-- Framer Motion is reserved for restrained transitions. `react-zoom-pan-pinch` is the planned Phase 2 interaction layer.
+- Framer Motion is reserved for restrained transitions. `react-zoom-pan-pinch` is the Phase 2 interaction layer.
 
 ## Coordinate contract
 
