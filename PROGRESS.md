@@ -2,13 +2,13 @@
 
 ## Current status
 
-Phase 3 — Portability & discovery: **in progress**
+Phase 3 — Portability & discovery: **promoted to main**
 
 Repository: `LucmanAly/Political-Compass`  
-Working branch: `develop`  
+Working branch: `develop` (follow-on work)  
 Version: `0.3.0`
 
-Phase 2 was promoted to `main` at commit `566565f7cc793504df6efe69119a8763560e3e3d`. Phase 3 is being developed on `develop`; `main` remains the stable Phase 2 checkpoint. The visual review limitation remains documented because the remote browser cannot reach workspace-local preview servers from this environment.
+Phase 2 was promoted to `main` at commit `566565f7cc793504df6efe69119a8763560e3e3d`. Phase 3 is now promoted to `main`; `develop` remains the active branch for follow-on work. The visual review limitation remains documented because the remote browser cannot reach workspace-local preview servers from this environment.
 
 ## Phase 3 checklist
 
@@ -24,6 +24,7 @@ Phase 2 was promoted to `main` at commit `566565f7cc793504df6efe69119a8763560e3e
 - [x] Production build — Vite build passed
 - [ ] Desktop and phone visual interaction review — blocked by workspace-local browser access
 - [x] Publish the Phase 3 checkpoint to `develop` — commit `731fa9a6f84c4681b340ad513d82dbcd2b0b4150`
+- [x] Promote the Phase 3 checkpoint to `main`
 
 ## Phase 3 boundary
 
@@ -37,4 +38,4 @@ Compare mode, starter-chart selection, Supabase sync, and public read-only links
 
 ## Handoff
 
-Phase 3 is implemented locally on `develop` and ready for the next review checkpoint. `main` stays on the promoted Phase 2 checkpoint until this portability pass is reviewed.
+Phase 3 is implemented and promoted to `main`. `develop` is ready for the next optional follow-on phase; the visual interaction review remains the only open validation item for this checkpoint.
