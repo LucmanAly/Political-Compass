@@ -2,7 +2,7 @@
 
 > Maintainer’s map for the Interactive Political Compass. Read this file before changing a feature. It explains which module owns each responsibility, how data moves through the application, which contracts must remain stable, and where to start when debugging or extending the product.
 
-**Snapshot:** v1.0 · Phase 3 and the first public release promoted to `main`  
+**Snapshot:** v1.1 · Full View cover behavior promoted to `main`  
 **Application:** React + Vite single-page app  
 **Persistence:** browser `localStorage` only  
 **Primary release:** GitHub Pages from `main`; Netlify configuration is also retained
@@ -280,9 +280,11 @@ The top-right **Full view** button calls `App.enterFocusMode()` and creates an i
 1. Open panels, selection, pending import review, and marker dragging are cleared.
 2. `focusMode` adds `.is-focus-mode` to `.app-shell`.
 3. CSS hides the topbar, toolbar, zoom buttons, legend, status readouts, detail/edit/import surfaces, and notices.
-4. The square `.canvas-frame` expands to `min(100vw, 100vh)` and remains centered.
-5. `CompassCanvas` receives `interactive={false}`, which prevents quick-add and makes `EntityMarker` omit click, drag, and keyboard-button handlers. Viewport wheel, pinch, and pan remain available.
-6. A single `Exit full view` button remains visible; Escape exits as well.
+4. `.canvas-frame` expands to the complete `100vw × 100dvh` viewport.
+5. `CompassViewport` calculates `max(width, height) / min(width, height)` through `coverScaleForViewport()` and raises the transform minimum scale to that value. The graph therefore covers the entire rectangular screen without distorting its square geometry.
+6. `FullViewTransform` recenters the cover-scale graph on entry, exit, resize, and orientation changes. On portrait screens the left/right edges are cropped initially but remain reachable by panning; landscape screens crop top/bottom in the same way.
+7. `CompassCanvas` receives `interactive={false}`, which prevents quick-add and makes `EntityMarker` omit click, drag, and keyboard-button handlers. Viewport wheel, pinch, and pan remain available.
+8. A single `Exit full view` button remains visible; Escape exits as well.
 
 `enterFocusMode()` requests the browser Fullscreen API when available. The CSS state is intentionally independent, so iPhone Safari and embedded browsers that reject or lack native fullscreen still get the full-viewport experience. A `fullscreenchange` listener clears `focusMode` when the user exits native fullscreen through browser controls.
 
@@ -489,6 +491,7 @@ The current suite has 12 tests across 3 files. There is no React component test 
 | Marker selection or dragging | `App.jsx`, `EntityMarker.jsx` | `CompassViewport.jsx`, `coordinates.js` |
 | Wheel/pinch/pan/zoom limits | `src/components/CompassViewport.jsx` | `App.jsx` zoom callbacks, `.zoom-controls` |
 | Full View / immersive presentation | `src/App.jsx` | `CompassCanvas.jsx`, `EntityMarker.jsx`, `.is-focus-mode` styles |
+| Full View cover-scale calculation | `src/lib/viewport.js` | `CompassViewport.jsx`, `viewport.test.js` |
 | Displayed version / last-updated date | `src/lib/release.js` | `App.jsx`, `.release-stamp`, `package.json` |
 | Add/edit form fields | `src/components/EntityPanel.jsx` | `entities.js`, `image.js`, panel styles |
 | Detail card actions | `src/components/EntityDetailCard.jsx` | `App.jsx` mutation handlers |

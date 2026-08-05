@@ -2,11 +2,11 @@
 
 ## Current status
 
-Version 1.0 — First public release: **promoted to main**
+Version 1.1 — True full-screen canvas cover: **promoted to main**
 
 Repository: `LucmanAly/Political-Compass`  
 Working branch: `develop` (follow-on work)  
-Version: `1.0` (package version `1.0.0`)
+Version: `1.1` (package version `1.1.0`)
 
 Phase 2 was promoted to `main` at commit `566565f7cc793504df6efe69119a8763560e3e3d`. Phase 3 is now promoted to `main`; `develop` remains the active branch for follow-on work. The visual review limitation remains documented because the remote browser cannot reach workspace-local preview servers from this environment.
 
@@ -32,6 +32,12 @@ Phase 2 was promoted to `main` at commit `566565f7cc793504df6efe69119a8763560e3e
 - [x] Establish the 1.0 → 1.1 → 1.2 release-numbering convention
 - [x] Publish Version 1.0 to `develop`
 - [x] Promote Version 1.0 to `main`
+- [x] Expand the Full View canvas frame to the complete viewport
+- [x] Automatically cover portrait and landscape screens without distorting the graph
+- [x] Preserve pan access to cropped edges and retain pinch/scroll zoom
+- [x] Add unit coverage for portrait, landscape, square, and invalid viewport dimensions
+- [x] Publish Version 1.1 to `develop`
+- [x] Promote Version 1.1 to `main`
 
 ## Phase 3 boundary
 
@@ -39,13 +45,14 @@ Compare mode, starter-chart selection, Supabase sync, and public read-only links
 
 ## Validation record
 
-- `npm test` — passed, 3 test files / 12 tests.
+- `npm test` — passed, 4 test files / 16 tests.
 - `npm run build` — passed, Vite generated `dist` successfully.
 - `GITHUB_ACTIONS=true npm run build` — passed, generated asset URLs under `/Political-Compass/`.
 - Version 1.0 release build — passed, 1,998 modules transformed with the Pages base path.
+- Version 1.1 release build — passed, 1,999 modules transformed in both standard and Pages builds.
 - Full View validation — controls are hidden, canvas expands, editing gestures are disabled, and pan/zoom remains available.
 - Browser visual QA — not completed in this environment; the remote browser cannot connect to workspace-local preview servers.
 
 ## Handoff
 
-Version 1.0 includes Phase 3, immersive Full View, and the persistent release stamp. The identical release tree is published on `develop` and `main`; the broader phone interaction review remains an open follow-on item.
+Version 1.1 corrects Full View so the graph itself covers the complete screen instead of merely hiding the surrounding interface. The identical release tree is published to `develop` and `main`.
