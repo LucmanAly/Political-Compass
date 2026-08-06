@@ -2,15 +2,15 @@
 
 ## Product boundary
 
-This is a personal, local-first political-compass instrument. Keep the interaction fast, tactile, and visually distinctive. Do not introduce authentication, analytics, advertising, or a backend during v1.
+This is a personal, local-first political compass. Keep the interaction clear, tactile, and focused on the chart. Do not introduce authentication, analytics, advertising, or a backend.
 
 ## Stack and structure
 
 - React + Vite is the application shell.
-- Tailwind is available for layout utilities; the visual system lives in `src/styles.css` so the instrument remains easy to tune.
+- Visual system lives in modular CSS under `src/styles/` with tokens in `tokens.css`.
 - Use SVG for the chart surface. Coordinate math belongs in `src/lib/coordinates.js`, not inside presentation components.
-- Keep persistence behind a small adapter in `src/lib/store.js` when the data layer is added. Components must not write to `localStorage` directly.
-- Framer Motion is reserved for restrained transitions. `react-zoom-pan-pinch` is the Phase 2 interaction layer.
+- Keep persistence behind `src/lib/store.js`. Components must not write to `localStorage` directly.
+- `react-zoom-pan-pinch` owns pan/zoom. Prefer CSS over animation libraries.
 
 ## Coordinate contract
 
@@ -19,19 +19,25 @@ This is a personal, local-first political-compass instrument. Keep the interacti
 - Positive social values render upward on the chart because screen Y increases downward.
 - Coordinates are always clamped to `[-10, 10]` at the data boundary.
 
+## Storage contract
+
+- Key: `political-compass.entities.v1`
+- On-disk shape: plain JSON array of entities (v1 compatibility)
+- Migration accepts envelope `{ schemaVersion|version, entities }` without overwriting empty user charts with samples
+- Fresh install only (missing key) seeds `SAMPLE_ENTITIES`
+
 ## Design contract
 
-- Background `#0F1420`; brass `#C9A661`.
-- Quadrant washes stay translucent and atmospheric, never flat solid blocks.
-- The compass rose is centered at the origin and remains the visual anchor.
-- Display type uses Fraunces/Newsreader-like serif styling; UI uses Inter/IBM Plex Sans; numeric readouts use IBM Plex Mono/JetBrains Mono.
-- The canvas is the interface. Avoid generic dashboard cards around it.
-- Mobile touch targets must be at least 44px once controls are interactive.
+- Editorial civic atlas: warm paper surfaces, charcoal text, restrained brick primary action
+- Chart is the workspace; chrome supports it rather than competing with it
+- Desktop: header + sidebar + chart + inspector
+- Mobile: chart between top bar and bottom dock; tools in bottom sheets
+- Placement mode for add; intentional move on mobile; drag threshold on desktop
+- Serif for title/headings; sans for UI; monospace only for coordinates
+- Touch targets ≥ 44×44 CSS pixels; respect safe-area insets and `prefers-reduced-motion`
 
-## Phase discipline
+## Quality
 
-- Work on `develop`; keep `main` releasable.
-- Finish and validate one phase before starting the next.
-- Update `PROGRESS.md` at every phase checkpoint with completed work, checks actually run, known limitations, and the next step.
-- Do not claim browser, mobile, backend, or end-to-end validation unless it was actually performed.
-- Keep nice-to-haves behind the v1 acceptance criteria.
+- Run `npm test` and `npm run build` before publishing
+- Under GitHub Actions, Vite `base` is `/Political-Compass/`
+- Update `PROGRESS.md` when shipping a meaningful milestone

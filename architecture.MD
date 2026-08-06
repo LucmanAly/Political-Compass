@@ -2,7 +2,7 @@
 
 > Maintainer’s map for the Interactive Political Compass. Read this file before changing a feature. It explains which module owns each responsibility, how data moves through the application, which contracts must remain stable, and where to start when debugging or extending the product.
 
-**Snapshot:** v1.1 · Full View cover behavior promoted to `main`  
+**Snapshot:** v2.0 � editorial civic atlas rebuild
 **Application:** React + Vite single-page app  
 **Persistence:** browser `localStorage` only  
 **Primary release:** GitHub Pages from `main`; Netlify configuration is also retained

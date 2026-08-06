@@ -1,0 +1,147 @@
+.chart-page {
+  fill: var(--surface);
+}
+
+.quad-ll {
+  fill: var(--quad-ll-fill);
+}
+
+.quad-lr {
+  fill: var(--quad-lr-fill);
+}
+
+.quad-al {
+  fill: var(--quad-al-fill);
+}
+
+.quad-ar {
+  fill: var(--quad-ar-fill);
+}
+
+.chart-border {
+  stroke: var(--border-strong);
+  stroke-width: 1.25;
+}
+
+.grid-lines line {
+  stroke: var(--grid);
+  stroke-width: 1;
+}
+
+.axis-lines line {
+  stroke: var(--axis);
+  stroke-width: 1.75;
+}
+
+.axis-ticks line {
+  stroke: var(--axis);
+  stroke-width: 1.25;
+}
+
+.axis-number {
+  fill: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.quadrant-labels text {
+  fill: var(--ink-muted);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.axis-label {
+  fill: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.origin-dot {
+  fill: var(--axis);
+}
+
+/* Markers */
+.entity-marker {
+  cursor: pointer;
+}
+
+.entity-marker .marker-hit {
+  fill: transparent;
+}
+
+.entity-marker .marker-body {
+  fill: var(--surface-raised);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.entity-marker .marker-ring {
+  fill: none;
+  stroke: var(--marker-accent, var(--border-strong));
+  stroke-width: 2.25;
+}
+
+.entity-marker .marker-selected-ring {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.75;
+  stroke-dasharray: none;
+}
+
+.entity-marker .marker-initials {
+  fill: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.entity-marker .marker-label rect {
+  fill: var(--surface);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.entity-marker .marker-label text {
+  fill: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.entity-marker .marker-type-badge {
+  fill: var(--surface);
+  stroke: var(--marker-accent, var(--ink-secondary));
+  stroke-width: 1.5;
+}
+
+.entity-marker.is-selected .marker-body {
+  stroke: var(--ink);
+}
+
+.entity-marker:focus-visible .marker-ring {
+  stroke: var(--focus);
+  stroke-width: 2.5;
+}
+
+.placement-preview .placement-ring {
+  fill: none;
+  stroke: var(--action);
+  stroke-width: 1.75;
+  stroke-dasharray: 4 3;
+}
+
+.placement-preview .placement-dot {
+  fill: var(--action);
+}
+
+.placement-preview .placement-coords {
+  fill: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+}
