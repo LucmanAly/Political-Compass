@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import ChartConfig from './components/chart/ChartConfig.jsx';
 import CompassCanvas from './components/chart/CompassCanvas.jsx';
 import CompassViewport from './components/chart/CompassViewport.jsx';
 import ImportReview from './components/data/ImportReview.jsx';
@@ -482,6 +483,13 @@ function App() {
                   Soc {formatCoordinate(coordReadout.social)}
                 </span>
               </div>
+            )}
+
+            {!fullView && (
+              <ChartConfig
+                activeTypes={activeTypes}
+                onChangeTypes={setActiveTypes}
+              />
             )}
 
             {placementMode && (

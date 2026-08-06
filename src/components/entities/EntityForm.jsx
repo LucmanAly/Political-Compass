@@ -168,15 +168,16 @@ function EntityForm({
 
         <label className="field" htmlFor="entity-notes">
           <span className="field-label">
-            Notes <span className="field-optional">optional</span>
+            Description <span className="field-optional">optional</span>
           </span>
+          <span className="field-hint">One or two short lines shown when this entity is selected.</span>
           <textarea
             id="entity-notes"
             value={draft.notes}
             onChange={(event) => updateDraft('notes', event.target.value)}
             maxLength={240}
             rows={3}
-            placeholder="A short description or source note"
+            placeholder="e.g. Centre-left party supporting a mixed economy and broader social rights."
           />
         </label>
 

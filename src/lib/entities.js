@@ -4,7 +4,14 @@ export const ENTITY_TYPES = Object.freeze([
   { value: 'person', label: 'Person' },
   { value: 'party', label: 'Party' },
   { value: 'organization', label: 'Organization' },
-  { value: 'ideology', label: 'Ideology' },
+  { value: 'ideology', label: 'Philosophy' },
+]);
+
+/** Primary layer categories shown in chart configuration. */
+export const CHART_LAYER_TYPES = Object.freeze([
+  { value: 'person', label: 'Persons' },
+  { value: 'party', label: 'Parties' },
+  { value: 'ideology', label: 'Philosophies' },
 ]);
 
 export const ENTITY_TYPE_LABELS = Object.freeze(

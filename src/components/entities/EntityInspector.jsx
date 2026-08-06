@@ -13,6 +13,8 @@ function EntityInspector({
 }) {
   if (!entity) return null;
 
+  const description = String(entity.notes || '').trim();
+
   const content = (
     <>
       <header className="inspector-header">
@@ -41,11 +43,16 @@ function EntityInspector({
         </span>
       </div>
 
-      {entity.notes ? (
-        <p className="inspector-notes">{entity.notes}</p>
-      ) : (
-        <p className="inspector-notes is-muted">No notes yet.</p>
-      )}
+      <section className="inspector-description" aria-label="Description">
+        <h3 className="inspector-description-label">Description</h3>
+        {description ? (
+          <p className="inspector-notes">{description}</p>
+        ) : (
+          <p className="inspector-notes is-muted">
+            No short description yet. Use Edit to add one or two lines about this position.
+          </p>
+        )}
+      </section>
 
       <div className="inspector-actions">
         <button type="button" className="btn btn-secondary" onClick={() => onEdit(entity)}>

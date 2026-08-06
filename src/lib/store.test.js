@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SAMPLE_ENTITIES } from '../data/sampleEntities.js';
 import {
   ENTITY_STORAGE_KEY,
+  SAMPLE_CONTENT_STORAGE_KEY,
   loadEntities,
   migrateStoredPayload,
   saveEntities,
@@ -11,6 +12,7 @@ describe('storage migration', () => {
   afterEach(() => {
     if (typeof window !== 'undefined' && window.localStorage) {
       window.localStorage.removeItem(ENTITY_STORAGE_KEY);
+      window.localStorage.removeItem(SAMPLE_CONTENT_STORAGE_KEY);
     }
   });
 
@@ -56,6 +58,56 @@ describe('storage migration', () => {
     expect(result.entities.map((entity) => entity.id)).toEqual(
       SAMPLE_ENTITIES.map((entity) => entity.id),
     );
+    expect(result.entities).toHaveLength(30);
+  });
+
+  it('upgrades the legacy ideology sample pack without touching other charts', () => {
+    const legacy = [
+      'sample-social-democracy',
+      'sample-classical-liberalism',
+      'sample-authoritarian-right',
+      'sample-anarchism',
+      'sample-centrism',
+    ].map((id, index) => ({
+      id,
+      name: id,
+      type: 'ideology',
+      economic: 0,
+      social: 0,
+      createdAt: index + 1,
+    }));
+    window.localStorage.setItem(ENTITY_STORAGE_KEY, JSON.stringify(legacy));
+    const result = loadEntities();
+    expect(result.isSample).toBe(true);
+    expect(result.entities.map((entity) => entity.id)).toEqual(
+      SAMPLE_ENTITIES.map((entity) => entity.id),
+    );
+    expect(result.entities.filter((entity) => entity.type === 'person')).toHaveLength(10);
+    expect(result.entities.filter((entity) => entity.type === 'party')).toHaveLength(10);
+    expect(result.entities.filter((entity) => entity.type === 'ideology')).toHaveLength(10);
+  });
+
+  it('upgrades the persons-only sample pack to the full starter set', () => {
+    const personsOnly = SAMPLE_ENTITIES
+      .filter((entity) => entity.type === 'person')
+      .map((entity) => ({ ...entity }));
+    window.localStorage.setItem(ENTITY_STORAGE_KEY, JSON.stringify(personsOnly));
+    const result = loadEntities();
+    expect(result.isSample).toBe(true);
+    expect(result.entities).toHaveLength(30);
+  });
+
+  it('refreshes pure sample charts when sample content version is outdated', () => {
+    const stale = SAMPLE_ENTITIES.map((entity) => ({
+      ...entity,
+      notes: 'old note',
+    }));
+    window.localStorage.setItem(ENTITY_STORAGE_KEY, JSON.stringify(stale));
+    window.localStorage.setItem(SAMPLE_CONTENT_STORAGE_KEY, '1');
+    const result = loadEntities();
+    expect(result.isSample).toBe(true);
+    expect(result.entities[0].notes).toBe(SAMPLE_ENTITIES[0].notes);
+    expect(window.localStorage.getItem(SAMPLE_CONTENT_STORAGE_KEY)).toBe('3');
   });
 
   it('never replaces an intentional empty chart with sample data', () => {

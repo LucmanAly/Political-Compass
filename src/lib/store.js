@@ -1,12 +1,29 @@
-import { SAMPLE_ENTITIES } from '../data/sampleEntities.js';
+import {
+  SAMPLE_CONTENT_VERSION,
+  SAMPLE_ENTITIES,
+  shouldUpgradeSamplePack,
+} from '../data/sampleEntities.js';
 import { normalizeEntity } from './entities.js';
 
 /** Stable storage key — must remain compatible with existing installs. */
 export const ENTITY_STORAGE_KEY = 'political-compass.entities.v1';
+export const SAMPLE_CONTENT_STORAGE_KEY = 'political-compass.sample-content.v';
 export const STORAGE_SCHEMA_VERSION = 1;
 
 function canUseStorage() {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+}
+
+function readSampleContentVersion() {
+  if (!canUseStorage()) return 0;
+  const raw = window.localStorage.getItem(SAMPLE_CONTENT_STORAGE_KEY);
+  const version = Number(raw);
+  return Number.isFinite(version) ? version : 0;
+}
+
+function writeSampleContentVersion(version = SAMPLE_CONTENT_VERSION) {
+  if (!canUseStorage()) return;
+  window.localStorage.setItem(SAMPLE_CONTENT_STORAGE_KEY, String(version));
 }
 
 /**
@@ -61,6 +78,7 @@ export function loadEntities() {
     const saved = window.localStorage.getItem(ENTITY_STORAGE_KEY);
 
     if (saved == null) {
+      writeSampleContentVersion();
       return {
         entities: SAMPLE_ENTITIES.map(normalizeEntity),
         isSample: true,
@@ -71,10 +89,21 @@ export function loadEntities() {
     const migrated = migrateStoredPayload(saved);
 
     if (migrated.entities == null) {
+      writeSampleContentVersion();
       return {
         entities: SAMPLE_ENTITIES.map(normalizeEntity),
         isSample: true,
         loadError: 'Saved chart data could not be read. Showing sample positions instead.',
+      };
+    }
+
+    // Upgrade previous built-in packs / refresh pure sample content; never touch user charts.
+    if (shouldUpgradeSamplePack(migrated.entities, readSampleContentVersion())) {
+      writeSampleContentVersion();
+      return {
+        entities: SAMPLE_ENTITIES.map(normalizeEntity),
+        isSample: true,
+        loadError: '',
       };
     }
 
@@ -113,5 +142,6 @@ export function saveEntities(entities) {
 export function clearStoredEntities() {
   if (canUseStorage()) {
     window.localStorage.removeItem(ENTITY_STORAGE_KEY);
+    window.localStorage.removeItem(SAMPLE_CONTENT_STORAGE_KEY);
   }
 }
